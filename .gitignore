@@ -1,15 +1,64 @@
-.venv
+# ===========================
+# 🔧 Entorno y dependencias
+# ===========================
+.venv/
 .env
-env/
 __pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
 
-# Jupyter Notebooks ###
+# ===========================
+# 🧠 Jupyter / VSCode
+# ===========================
 .ipynb_checkpoints/
+.vscode/
+*.code-workspace
 
-# macOS
+# ===========================
+# 📊 Datos 
+# ===========================
+data/raw/
+data/interim/
+data/processed/
+*.csv
+*.xlsx
+*.parquet
+*.json
+
+# ===========================
+# 🤖 Modelos y artefactos binarios
+# ===========================
+artifacts/
+mlruns/
+*.joblib
+*.pkl
+*.pickle
+
+# ===========================
+# 🚀 Gradio / Streamlit / logs
+# ===========================
+*.log
+gradio_cached_examples/
+__pycache__/
+*.db
+*.sqlite
+
+# ===========================
+# ☁️ Kaggle y credenciales
+# ===========================
+kaggle.json
+
+# ===========================
+# 💻 MacOS
+# ===========================
+
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Carpetas generadas por mlflow
-mlruns
+
+

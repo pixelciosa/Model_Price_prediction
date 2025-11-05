@@ -1,10 +1,17 @@
-*.csv filter=lfs diff=lfs merge=lfs -text
-*.pickle filter=lfs diff=lfs merge=lfs -text
-*.pkl filter=lfs diff=lfs merge=lfs -text
-*.PNG filter=lfs diff=lfs merge=lfs -text
+# ===========================
+# ⚙️ Git LFS configuración
+
+# Pickles de modelos finales
 models/*.pkl filter=lfs diff=lfs merge=lfs -text
 models/*.pickle filter=lfs diff=lfs merge=lfs -text
 models/*.joblib filter=lfs diff=lfs merge=lfs -text
+# Archivos de datos pesados
+*.csv filter=lfs diff=lfs merge=lfs -text
 *.parquet filter=lfs diff=lfs merge=lfs -text
 *.xlsx filter=lfs diff=lfs merge=lfs -text
+# Artefactos de entrenamiento o métricas grandes
 artifacts/** filter=lfs diff=lfs merge=lfs -text
+# ⚠️ Nota
+# Los archivos en .gitattributes se almacenan mediante LFS,
+# mientras que los definidos en .gitignore ni siquiera se suben.
+# Usar ambos te da control granular.

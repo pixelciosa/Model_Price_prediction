@@ -1,4 +1,9 @@
 # Proyecto Final de Ciencia de Datos y MLOps
+Este proyecto corresponde al entregable final del bootcamp de Ciencia de Datos y MLOps de EDVai.
+Su objetivo es realizar un análisis exploratorio de datos (EDA), construir un modelo predictivo y desplegarlo mediante una interfaz interactiva con Gradio.
+
+Incluye buenas prácticas de ingeniería de datos, trazabilidad de experimentos con MLflow y control de versiones de modelos mediante Git LFS.
+
 
 ## Entorno
 - Python 3.11.13
