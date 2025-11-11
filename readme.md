@@ -4,7 +4,6 @@ Su objetivo es realizar un análisis exploratorio de datos (EDA), construir un m
 
 Incluye buenas prácticas de ingeniería de datos, trazabilidad de experimentos con MLflow y control de versiones de modelos mediante Git LFS.
 
-
 ## Entorno
 - Python 3.11.13
 - Entorno virtual: `.venv`
@@ -16,3 +15,11 @@ Incluye buenas prácticas de ingeniería de datos, trazabilidad de experimentos 
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+
+## Correr la aplicación de forma local
+- Ejecutar desde el folder raíz: `python app/app.py`
+- Para probar la API localmente ejecutar: src/call-api.py, (necesita ajustar el puerto donde esté corriendo Gradio)
+
+# Abrir la aplicación de HuggingFace:
+- https://huggingface.co/spaces/pixelciosa/estimador_alquileres_oficinas_caba
+

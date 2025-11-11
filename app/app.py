@@ -46,7 +46,9 @@ def predict(*args):
 with gr.Blocks() as demo:
     gr.Markdown(
         """
-        # Valuación de Alquileres de Oficinas en CABA 🏢
+        <h1 style='text-align: center'>
+        Valuación de Alquileres de Oficinas en CABA 🏢
+        </h1>
         """
     )
 
@@ -88,9 +90,6 @@ with gr.Blocks() as demo:
        'Villa Devoto', 'Villa Urquiza', 'Villa del Parque', 'Otro'],
                 value='Abasto',
                 )
-
-    with gr.Row():
-        with gr.Column():
             gr.Markdown(
                 """
                 ## Predicción en dólares mensuales
@@ -110,6 +109,8 @@ with gr.Blocks() as demo:
                 outputs=[label],
                 api_name="prediccion"
             )
+
+            
         with gr.Column():
             gr.Image(
                 value="app/images/Mapa-CABA.svg",
@@ -119,10 +120,10 @@ with gr.Blocks() as demo:
         """
         <p style='text-align: center'>
             <a href='https://www.escueladedatosvivos.ai/cursos/bootcamp-de-data-science' 
-                target='_blank'>Proyecto creado por Adriana Villalobos en el bootcamp de EDVAI 🤗
+                target='_blank'>Proyecto creado por Adriana Villalobos en el bootcamp de Data Science y MLops de EDVai 🤓
             </a>
         </p>
         """
     )
 
-demo.launch(share = True)
+demo.launch()
