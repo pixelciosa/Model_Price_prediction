@@ -11,10 +11,10 @@ PARAMS_NAME = [
     "neighborhood"
 ]
 
-# Encoder de neighborhood
-ENCODER_PATH = "models/le_neighborhood.pkl"
+# OHE Encoder
+ENCODER_PATH = "models/ohe_columns.pkl"
 with open(ENCODER_PATH, 'rb') as handle:
-   le = pickle.load(handle)
+   ohe = pickle.load(handle)
 
 
 # Scaler
@@ -36,8 +36,15 @@ def predict(*args):
 
     single_instance = pd.DataFrame.from_dict(answer_dict)
     
-    # Transform neighborhood column
-    single_instance['neighborhood_encoded'] = le.transform(single_instance['neighborhood'])
+   
+    # Normalizar y Transformar barrio con get_dummies y reindexar con las columnas guardadas
+    single_instance['neighborhood'] = (
+        single_instance['neighborhood']
+        .str.strip()        # elimina espacios al principio/final
+        .str.title()        # pone la primera letra en mayúscula
+    )
+    single_instance = pd.get_dummies(single_instance, columns=['neighborhood'], prefix='neigh')
+    single_instance = single_instance.reindex(columns=ohe, fill_value=0)
 
     # Transformar variables numéricas con Scaler manteniendo el DataFrame
     surface_real = single_instance['surface_covered'].values[0] # guardo el dato sin transformar para usarlo despues
@@ -45,8 +52,11 @@ def predict(*args):
     for col in num_cols:
         single_instance[col] = scalers[col].transform(single_instance[[col]])
 
+    # Seleccionar todas las columnas que espera el modelo
+    features = num_cols + [col for col in single_instance.columns if col.startswith('neigh_')]
+
+
     # Realizo la predicción
-    features = ['rooms', 'bathrooms', 'surface_covered', 'neighborhood_encoded']
     prediction_USD_per_m2 = model.predict(single_instance[features])
     
     # Multiplicar por superficie real

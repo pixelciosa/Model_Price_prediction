@@ -19,16 +19,12 @@ df = df.drop(columns=['operation_type', 'property_type'])
 # Elimino filas con valores faltantes en las columnas relevantes
 df = df.drop(columns=['rooms_missing', 'bathrooms_missing'])
 
-# Convierto los strings de neighborhood a categorías numéricas con LabelEncoder
-le = LabelEncoder()
-df['neighborhood_encoded'] = le.fit_transform(df['neighborhood'])
-df.drop(columns=['neighborhood'], inplace=True)
 
-# Guardo las columnas para usar en producción
-with open('models/le_neighborhood.pkl', 'wb') as f:
-    pickle.dump(le, f)
+# Normalizo y convierto los strings de neighborhood con OHE
+df['neighborhood'] = df['neighborhood'].str.strip().str.title()
+df = pd.get_dummies(df, columns=['neighborhood'], prefix='neigh')
 
-# transformo las variables numéricas con StandardScaler
+# Transformo las variables numéricas con StandardScaler
 numericas = ['rooms', 'bathrooms', 'surface_covered']
 scalers = {}
 for col in numericas:
@@ -90,7 +86,12 @@ print(f"RMSE USD: {rmse[0]:.4f}")
 print(f"MAE USD: {mae:.4f}")
 
 
-# Guardar en el disco
+ohe = list(X_train.columns)  # X_train solo con features, sin price_usd ni price_per_m2
+# Guardo las columnas para usar en producción
+with open('models/ohe_columns.pkl', 'wb') as f:
+    pickle.dump(ohe, f)
+
+# Guardo modelo en el disco
 with open('models/model.pkl', 'wb') as f:
     pickle.dump(model, f)
 
