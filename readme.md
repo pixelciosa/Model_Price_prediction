@@ -24,3 +24,16 @@ pip install -r requirements.txt
 - https://huggingface.co/spaces/pixelciosa/estimador_alquileres_oficinas_caba
 - Para probar la API localmente ejecutar: src/call-api.py
 
+# Ejemplo para probar la API
+client = Client("pixelciosa/estimador_alquileres_oficinas_caba")
+result = client.predict(
+	param_0=5,
+	param_1=4,
+	param_2=600,
+	param_3="Catalinas",
+	api_name="/prediccion"
+)
+print(result)
+
+# Captura del funcionamiento
+![evidencia](evidencia.png)

@@ -137,7 +137,7 @@ with gr.Blocks() as demo:
             
         with gr.Column():
             gr.Image(
-                value="app/images/Mapa-CABA.svg",
+                value="images/Mapa-CABA.svg",
                 show_label=False
                 )
     gr.Markdown(
