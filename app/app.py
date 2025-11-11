@@ -1,6 +1,5 @@
 import gradio as gr
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 import pickle
 
 
@@ -8,14 +7,20 @@ import pickle
 PARAMS_NAME = [
     "rooms",
     "bathrooms",
-    "surface_total",
+    "surface_covered",
     "neighborhood"
 ]
 
-# Columnas
-COLUMNS_PATH = "models/columns_labelEncoder.pkl"
-with open(COLUMNS_PATH, 'rb') as handle:
+# Encoder de neighborhood
+ENCODER_PATH = "models/le_neighborhood.pkl"
+with open(ENCODER_PATH, 'rb') as handle:
    le = pickle.load(handle)
+
+
+# Scaler
+SCALER_PATH = "models/scalers.pkl"
+with open(SCALER_PATH, 'rb') as handle:
+    scalers = pickle.load(handle)
 
 # Modelo
 MODEL_PATH = "models/model.pkl"
@@ -31,15 +36,24 @@ def predict(*args):
 
     single_instance = pd.DataFrame.from_dict(answer_dict)
     
-    # Reformat neighborhood column
-    le = LabelEncoder()
-    single_instance['neighborhood'] = le.fit_transform(single_instance['neighborhood'])
-    print(single_instance)
-    prediction_USD_per_m2 = model.predict(single_instance)
-    total_USD = prediction_USD_per_m2 * single_instance['surface_total'].values[0]
+    # Transform neighborhood column
+    single_instance['neighborhood_encoded'] = le.transform(single_instance['neighborhood'])
+
+    # Transformar variables numéricas con Scaler manteniendo el DataFrame
+    surface_real = single_instance['surface_covered'].values[0] # guardo el dato sin transformar para usarlo despues
+    num_cols = ['rooms', 'bathrooms', 'surface_covered']
+    for col in num_cols:
+        single_instance[col] = scalers[col].transform(single_instance[[col]])
+
+    # Realizo la predicción
+    features = ['rooms', 'bathrooms', 'surface_covered', 'neighborhood_encoded']
+    prediction_USD_per_m2 = model.predict(single_instance[features])
+    
+    # Multiplicar por superficie real
+    total_USD = prediction_USD_per_m2 * surface_real
 
     response = format(total_USD[0], '.0f')
-    #print(response)
+
     return (response)
 
 
@@ -71,7 +85,7 @@ with gr.Blocks() as demo:
                 choices=[0, 1, 2, 3, 4, 5, 6, 7, 8 ,9, 10 ],
                 value=1
                 )
-            surface = gr.Slider(
+            surface_covered = gr.Slider(
                 label="Superficie cubierta en metros cuadrados",
                 minimum=1, maximum=10000,
                 step=1,
@@ -103,7 +117,7 @@ with gr.Blocks() as demo:
                 inputs=[
                     rooms,
                     bathrooms,
-                    surface,
+                    surface_covered,
                     neighborhood
                 ],
                 outputs=[label],

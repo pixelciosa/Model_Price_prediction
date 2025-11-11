@@ -25,27 +25,25 @@ df['neighborhood_encoded'] = le.fit_transform(df['neighborhood'])
 df.drop(columns=['neighborhood'], inplace=True)
 
 # Guardo las columnas para usar en producción
-print(df.columns.tolist())
-
-with open('models/columns_labelEncoder.pkl', 'wb') as f:
-    pickle.dump(df.columns.tolist(), f)
+with open('models/le_neighborhood.pkl', 'wb') as f:
+    pickle.dump(le, f)
 
 # transformo las variables numéricas con StandardScaler
 numericas = ['rooms', 'bathrooms', 'surface_covered']
+scalers = {}
 for col in numericas:
     scaler = StandardScaler()
     df[col] = scaler.fit_transform(df[[col]])
+    scalers[col] = scaler
 
 # Guardo el scaler para usar en producción
-with open("models/scaler.pkl", "wb") as f:
-    pickle.dump(scaler, f)
+with open("models/scalers.pkl", "wb") as f:
+    pickle.dump(scalers, f)
 
 # Elimina columna target y columna relacionada
 X_reg = df.drop(columns=['price_usd', 'price_per_m2'])
 y_reg = df['price_per_m2']
 
-X_reg = X_reg.values
-y_reg = y_reg.values
 
 # Preparación de train y test
 TEST_SIZE = 0.2
