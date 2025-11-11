@@ -5,17 +5,9 @@ import pickle
 from sklearn.ensemble import RandomForestRegressor 
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
-import os
-from pathlib import Path
 from sklearn.metrics import r2_score, mean_absolute_error, root_mean_squared_error, mean_squared_error
 
-
-# Configuro el directorio para no tener /mlruns dentro de los notebooks
-current_dir = Path.cwd()
-if current_dir.name == "notebooks":
-    os.chdir(current_dir.parent)
-
-
+# Cargar datos
 df = pd.read_csv('data/data_cleaned.csv', sep=",")
 
 # Acoto el dataset a un solo tipo de transacción basado en las conclusiones del notebook 02_Model_comparisson
@@ -24,13 +16,17 @@ p =  'Oficina'
 df = df[(df['operation_type'] == t) & (df['property_type'] == p)]
 df = df.drop(columns=['operation_type', 'property_type'])
 
-# Convierto los strings de neighborhood a categorías numéricas con LabelEncoder
+# Elimino filas con valores faltantes en las columnas relevantes
+df = df.drop(columns=['rooms_missing', 'bathrooms_missing'])
 
+# Convierto los strings de neighborhood a categorías numéricas con LabelEncoder
 le = LabelEncoder()
 df['neighborhood_encoded'] = le.fit_transform(df['neighborhood'])
 df.drop(columns=['neighborhood'], inplace=True)
 
 # Guardo las columnas para usar en producción
+print(df.columns.tolist())
+
 with open('models/columns_labelEncoder.pkl', 'wb') as f:
     pickle.dump(df.columns.tolist(), f)
 
@@ -40,13 +36,16 @@ for col in numericas:
     scaler = StandardScaler()
     df[col] = scaler.fit_transform(df[[col]])
 
-    # Guardo el scaler para usarlo en producción
-    with open(f'models/scaler_{col}.pkl', 'wb') as f:
-        pickle.dump(scaler, f)
+# Guardo el scaler para usar en producción
+with open("models/scaler.pkl", "wb") as f:
+    pickle.dump(scaler, f)
 
 # Elimina columna target y columna relacionada
 X_reg = df.drop(columns=['price_usd', 'price_per_m2'])
 y_reg = df['price_per_m2']
+
+X_reg = X_reg.values
+y_reg = y_reg.values
 
 # Preparación de train y test
 TEST_SIZE = 0.2

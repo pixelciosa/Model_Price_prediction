@@ -13,12 +13,12 @@ PARAMS_NAME = [
 ]
 
 # Columnas
-COLUMNS_PATH = "../models/columns_labelEncoder.pkl"
+COLUMNS_PATH = "models/columns_labelEncoder.pkl"
 with open(COLUMNS_PATH, 'rb') as handle:
    le = pickle.load(handle)
 
 # Modelo
-MODEL_PATH = "../models/model.pkl"
+MODEL_PATH = "models/model.pkl"
 with open(MODEL_PATH, 'rb') as handle:
     model = pickle.load(handle)
 
@@ -33,11 +33,12 @@ def predict(*args):
     
     # Reformat neighborhood column
     le = LabelEncoder()
-    single_instance = le.fit_transform(single_instance['neighborhood'])
-    
-    prediction = model.predict(single_instance)
+    single_instance['neighborhood'] = le.fit_transform(single_instance['neighborhood'])
+    print(single_instance)
+    prediction_USD_per_m2 = model.predict(single_instance)
+    total_USD = prediction_USD_per_m2 * single_instance['surface_total'].values[0]
 
-    response = format(prediction[0], '.2f')
+    response = format(total_USD[0], '.0f')
     #print(response)
     return (response)
 
@@ -55,22 +56,24 @@ with gr.Blocks() as demo:
                 ## Características de la oficina
                 """
             )
+    with gr.Row():
         with gr.Column():
             rooms = gr.Slider(
                 label="Cantidad de Ambientes",
                 minimum=1, maximum=100,
                 step=1,
+                value=3
                 )
             bathrooms= gr.Dropdown(
                 label="Cantidad de baños",
                 choices=[0, 1, 2, 3, 4, 5, 6, 7, 8 ,9, 10 ],
-                value="1"
+                value=1
                 )
-        with gr.Column():
             surface = gr.Slider(
                 label="Superficie cubierta en metros cuadrados",
                 minimum=1, maximum=10000,
                 step=1,
+                value=100
                 )
             neighborhood = gr.Dropdown(
                 label="Barrio",
@@ -86,32 +89,31 @@ with gr.Blocks() as demo:
                 value='Abasto',
                 )
 
-        with gr.Row():
-            with gr.Column():
-                gr.Markdown(
-                    """
-                    ## Predicción en dólares mensuales
-                    """
-                )
+    with gr.Row():
+        with gr.Column():
+            gr.Markdown(
+                """
+                ## Predicción en dólares mensuales
+                """
+            )
 
-                label = gr.Label(label="Valor aproximado del alquiler")
-                predict_btn = gr.Button(value="Calcular")
-                predict_btn.click(
-                    predict,
-                    inputs=[
-                        rooms,
-                        bathrooms,
-                        surface,
-                        neighborhood
-                    ],
-                    outputs=[label],
-                    api_name="prediccion"
-                )
-            with gr.Column():
-                gr.Image(
-                    value="https://upload.wikimedia.org/wikipedia/commons/3/32/Mapa-CABA-Barrios-Numeros-Nombres.svg",
-                    show_label=False,
-                    width=300
+            label = gr.Label(label="Valor aproximado del alquiler")
+            predict_btn = gr.Button(value="Calcular")
+            predict_btn.click(
+                predict,
+                inputs=[
+                    rooms,
+                    bathrooms,
+                    surface,
+                    neighborhood
+                ],
+                outputs=[label],
+                api_name="prediccion"
+            )
+        with gr.Column():
+            gr.Image(
+                value="app/images/Mapa-CABA.svg",
+                show_label=False
                 )
     gr.Markdown(
         """
