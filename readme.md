@@ -18,8 +18,9 @@ pip install -r requirements.txt
 
 ## Correr la aplicación de forma local
 - Ejecutar desde el folder raíz: `python app/app.py`
-- Para probar la API localmente ejecutar: src/call-api.py, (necesita ajustar el puerto donde esté corriendo Gradio)
+- Para probar la API localmente ejecutar: src/call-api.py, (necesita descomentar la línea de cliente local y ajustar el puerto donde esté corriendo Gradio)
 
 # Abrir la aplicación de HuggingFace:
 - https://huggingface.co/spaces/pixelciosa/estimador_alquileres_oficinas_caba
+- Para probar la API localmente ejecutar: src/call-api.py
 
