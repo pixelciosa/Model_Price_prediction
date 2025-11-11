@@ -25,6 +25,7 @@ pip install -r requirements.txt
 - Para probar la API localmente ejecutar: src/call-api.py
 
 # Ejemplo para probar la API
+```python
 client = Client("pixelciosa/estimador_alquileres_oficinas_caba")
 result = client.predict(
 	param_0=5,
@@ -34,6 +35,7 @@ result = client.predict(
 	api_name="/prediccion"
 )
 print(result)
+```
 
 # Captura del funcionamiento
 ![evidencia](evidencia.png)
