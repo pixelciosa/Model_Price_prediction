@@ -38,4 +38,4 @@ print(result)
 ```
 
 # Captura del funcionamiento
-![evidencia](evidencia.png)
+![captura](evidencia.png)
