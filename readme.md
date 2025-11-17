@@ -20,11 +20,11 @@ pip install -r requirements.txt
 - Ejecutar desde el folder raíz: `python app/app.py`
 - Para probar la API localmente ejecutar: src/call-api.py, (necesita descomentar la línea de cliente local y ajustar el puerto donde esté corriendo Gradio)
 
-# Abrir la aplicación de HuggingFace:
+## Abrir la aplicación de HuggingFace:
 - https://huggingface.co/spaces/pixelciosa/estimador_alquileres_oficinas_caba
 - Para probar la API localmente ejecutar: src/call-api.py
 
-# Ejemplo para probar la API
+## Ejemplo para probar la API
 ```python
 client = Client("pixelciosa/estimador_alquileres_oficinas_caba")
 result = client.predict(
@@ -39,5 +39,5 @@ result = client.predict(
 print(result)
 ```
 
-# Captura del funcionamiento
+## Captura del funcionamiento
 ![captura](evidencia.png)
