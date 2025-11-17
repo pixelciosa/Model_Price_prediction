@@ -16,13 +16,13 @@ p =  'Oficina'
 df = df[(df['operation_type'] == t) & (df['property_type'] == p)]
 df = df.drop(columns=['operation_type', 'property_type'])
 
-# Elimino filas con valores faltantes en las columnas relevantes
-df = df.drop(columns=['rooms_missing', 'bathrooms_missing'])
+# Convierto los strings de neighborhood con LabelEncoder
+le_neighborhood = LabelEncoder()
+df['neighborhood'] = le_neighborhood.fit_transform(df['neighborhood'])
 
-
-# Normalizo y convierto los strings de neighborhood con OHE
-df['neighborhood'] = df['neighborhood'].str.strip().str.title()
-df = pd.get_dummies(df, columns=['neighborhood'], prefix='neigh')
+# Guardo las columnas para usar en producción
+with open('models/le_neighborhood.pkl', 'wb') as f:
+  pickle.dump(le_neighborhood, f)
 
 # Transformo las variables numéricas con StandardScaler
 numericas = ['rooms', 'bathrooms', 'surface_covered']
@@ -45,24 +45,20 @@ y_reg = df['price_per_m2']
 TEST_SIZE = 0.2
 RANDOM_STATE = 42
 
-# Aplico logaritmo al target
-y_log = np.log1p(y_reg)
-
 # Separo en train y test
-X_train, X_test, y_train, y_test = train_test_split(X_reg, y_log, test_size=TEST_SIZE, random_state=RANDOM_STATE)
+X_train, X_test, y_train, y_test = train_test_split(X_reg, y_reg, test_size=TEST_SIZE, random_state=RANDOM_STATE)
 
 # Definición del modelo base
 
 # mejores hiperparámetros aplicados) 
 rf_params = {
-    "n_estimators": 1000,
-    "max_depth": 20,
-    "max_features": "sqrt",
-    "min_samples_split": 2,
-    "min_samples_leaf": 2,
-    "random_state": 42,
-    "n_jobs": -1,
-}
+    'max_depth': 20, 
+    'max_features': 'None', 
+    'min_samples_leaf': 1, 
+    'min_samples_split': 2, 
+    'n_estimators': 1000
+    }
+
 model = RandomForestRegressor(**rf_params)
 
 
@@ -75,9 +71,9 @@ y_pred = model.predict(X_test)
 # Evaluación de métricas
 y_pred = model.predict(X_test)
 
-mse = mean_squared_error(np.expm1(y_test), np.expm1(y_pred))
-rmse = root_mean_squared_error(np.expm1(y_test), np.expm1(y_pred)),
-mae = mean_absolute_error(np.expm1(y_test), np.expm1(y_pred))
+mse = mean_squared_error(y_test, y_pred)
+rmse = root_mean_squared_error(y_test, y_pred),
+mae = mean_absolute_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
 print(f"R2: {r2:.4f}")
@@ -85,11 +81,6 @@ print(f"MSE USD: {mse:.4f}")
 print(f"RMSE USD: {rmse[0]:.4f}")
 print(f"MAE USD: {mae:.4f}")
 
-
-ohe = list(X_train.columns)  # X_train solo con features, sin price_usd ni price_per_m2
-# Guardo las columnas para usar en producción
-with open('models/ohe_columns.pkl', 'wb') as f:
-    pickle.dump(ohe, f)
 
 # Guardo modelo en el disco
 with open('models/model.pkl', 'wb') as f:
