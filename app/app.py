@@ -60,13 +60,13 @@ def predict(*args):
 
     return ('USD $'+response)
 
-def update_slider_interactive(checkbox_value):
+def update_slider_display(checkbox_value):
     """
-    Si el checkbox es True, el slider es NO interactivo.
-    Si el checkbox es False, el slider es interactivo.
+    Si el checkbox es True, el slider NO se muestra.
+    Si el checkbox es False, el slider es muestra.
     """
-    # El valor del checkbox es el mismo valor que queremos para 'interactive'
-    return gr.Slider(visible= not checkbox_value)
+    # El valor del checkbox es el mismo valor que queremos para 'display'
+    return gr.Slider(visible = not checkbox_value)
 
 with gr.Blocks() as demo:
     gr.Markdown(
@@ -148,7 +148,7 @@ with gr.Blocks() as demo:
             
         with gr.Column():
             gr.Image(
-                value="images/Mapa-CABA.svg",
+                value="app/images/Mapa-CABA.svg",
                 show_label=False
                 )
     gr.Markdown(
@@ -163,12 +163,12 @@ with gr.Blocks() as demo:
 
     # Interacción: Cuando el checkbox cambia, llama a la función
     rooms_missing.change(
-        fn=update_slider_interactive, # La función con la lógica 
+        fn=update_slider_display, # La función con la lógica 
         inputs=[rooms_missing],       # Lee el estado del checkbox
         outputs=[rooms]               # Actualiza el slider
     )
     bathrooms_missing.change(
-        fn=update_slider_interactive,     # La función con la lógica 
+        fn=update_slider_display,     # La función con la lógica 
         inputs=[bathrooms_missing],       # Lee el estado del checkbox
         outputs=[bathrooms]               # Actualiza el slider
     )
