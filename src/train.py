@@ -53,7 +53,7 @@ X_train, X_test, y_train, y_test = train_test_split(X_reg, y_reg, test_size=TEST
 # mejores hiperparámetros aplicados) 
 rf_params = {
     'max_depth': 20, 
-    'max_features': 'None', 
+    'max_features': None, 
     'min_samples_leaf': 1, 
     'min_samples_split': 2, 
     'n_estimators': 1000
